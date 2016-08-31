@@ -1,40 +1,33 @@
 //	THE LIRI BOT PROJECT
 //	LIRI is a Language Interpretation and Recognition Interface. LIRI will be a command line node app that takes in parameters and gives you back data.
+var inquirer = require('inquirer');
+var twitter = require('twitter');
+var spotify = require('spotify');
+var request = require('request');
+var fs = require('fs');
+
 // Before You Begin
-// LIRI will display your latest tweets. If you don't already have an account on Twitter, make one and post a few tweets about your latest projects.
-// Make a new GitHub repository called liri-node-app and clone it to your computer.
-// To retrieve the data that will power this app, you'll need to send requests to the Twitter, Spotify and IMDB APIs. You'll find these Node packages crucial for your assignment.
+// LIRI will display your latest tweets. Twitter: @dankaltenbaugh MM16S	(Done)
+// Make a new GitHub repository called liri-node-app and clone it to your computer. (Done)
+// To retrieve the data that will power this app, you'll need to send requests to the Twitter, Spotify and IMDB APIs. 
+//	You'll find these Node packages crucial for your assignment.
+
 // Twitter
 // Spotify
 // Request
-// You'll use Request to grab data from the OMDB API.
+// You will use Request to grab data from the OMDB API.
+
 // Instructions
-// Make a .gitignore file and add the following lines to it.
-// keys.js
-// node_modules
-// .DS_Store
-// * You don't need .DS_Store in the .gitignore file if you're on a Windows Machine.
-// Make a JavaScript file named keys.js.
-// Inside keys.js your file will look like this:
-// console.log('this is loaded');
-// exports.twitterKeys = {
-//   consumer_key: '<input here>',
-//   consumer_secret: '<input here>',
-//   access_token_key: '<input here>',
-//   access_token_secret: '<input here>',
-// }
-// Get your Twitter API keys by following these steps:
-// Step One: Visit https://apps.twitter.com/app/new
-// Step Two: Fill out the form with dummy data. Type http://google.com in the Website input. Don't fill out the Callback URL input. Then submit the form.
-// Step Three: On the next screen, click the Keys and Access Tokens tab to get your consume key and secret.
-// Copy and paste them where the <input here> tags are inside your keys.js file.
-// Step Four: At the bottom of the page, click the Create my access token button to get your access token key and secret.
-// Copy the access token key and secret displayed at the bottom of the next screen. Paste them where the <input here> tags are inside your keys.js file.
-// Make a file called random.txt.
-// Inside of random.txt put the following in with no extra characters or white space:
-// spotify-this-song,"I Want it That Way"
-// Make a JavaScript file named liri.js.
+// Make a .gitignore file (DONE)
+// Make a JavaScript file named keys.js. (DONE)
+// Get your Twitter API keys (DONE)
+// random.txt (DONE)
+// Make a JavaScript file named liri.js.(DONE)
+
 // At the top of the liri.js file, write the code you need to grab the data from keys.js. Then store the keys in a variable.
+const keys = require('./keys.js');
+// this is how to retrieve keys:
+// console.log("Consumer key " + keys.twitterKeys.consumer_key);
 // Make it so liri.js can take in one of the following commands:
 // my-tweets
 // spotify-this-song
@@ -78,3 +71,22 @@
 // Good Luck!
 // Copyright
 // Coding Boot Camp (C) 2016. All Rights Reserved.
+inquirer.prompt([
+  {
+    type: "list",
+    name: "doingWhat",
+    message: "What do you want to do?",
+    choices: ["my-tweets", "spotify-this-song", "movie-this", "do-what-it-says",] 
+  }
+]).then(function(user){
+  switch(user.doingWhat) {
+    case('my-tweets'):
+    case('spotify-this-song'):
+    case('movie-this'):
+    case('do-what-it-says'):
+    default:
+      console.log("Action " + user.doingWhat);
+      break;
+  }
+
+});
