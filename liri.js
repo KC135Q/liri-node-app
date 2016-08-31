@@ -10,12 +10,7 @@ var fs = require('fs');
 // LIRI will display your latest tweets. Twitter: @dankaltenbaugh MM16S	(Done)
 // Make a new GitHub repository called liri-node-app and clone it to your computer. (Done)
 // To retrieve the data that will power this app, you'll need to send requests to the Twitter, Spotify and IMDB APIs. 
-//	You'll find these Node packages crucial for your assignment.
-
-// Twitter
-// Spotify
-// Request
-// You will use Request to grab data from the OMDB API.
+//	You'll find these Node packages crucial for your assignment. Twitter, Spotify, Request- You will use Request to grab data from the OMDB API. (DONE)
 
 // Instructions
 // Make a .gitignore file (DONE)
@@ -24,18 +19,11 @@ var fs = require('fs');
 // random.txt (DONE)
 // Make a JavaScript file named liri.js.(DONE)
 
-// At the top of the liri.js file, write the code you need to grab the data from keys.js. Then store the keys in a variable.
 const keys = require('./keys.js');
-// this is how to retrieve keys:
-// console.log("Consumer key " + keys.twitterKeys.consumer_key);
-// Make it so liri.js can take in one of the following commands:
-// my-tweets
-// spotify-this-song
-// movie-this
-// do-what-it-says
+// this is how to retrieve keys: console.log("Consumer key " + keys.twitterKeys.consumer_key);
+
 // What Each Command Should Do
-// node liri.js my-tweets
-// This will show your last 20 tweets and when they were created at in your terminal/bash window.
+
 // node liri.js spotify-this-song '<song name here>'
 // This will show the following information about the song in your terminal/bash window
 // Artist(s)
@@ -81,12 +69,85 @@ inquirer.prompt([
 ]).then(function(user){
   switch(user.doingWhat) {
     case('my-tweets'):
+      showTweets();
+      break;
     case('spotify-this-song'):
+      getName('spot');
+      break;
     case('movie-this'):
+      getName('omdb');
+      break;
     case('do-what-it-says'):
     default:
       console.log("Action " + user.doingWhat);
       break;
   }
 
+  function getName(takeAction) {
+    inquirer.prompt([
+        {
+          type: 'input',
+          name: 'name',
+          message: 'which one',
+        },
+    ]).then( function(thingName) {
+      if (takeAction === 'spot') {
+        spotThis(thingName.name);
+      }
+      if (takeAction === 'omdb') {
+        omdbThis(thingName.name);
+      }
+    });
+  }
+
 });
+
+function showTweets() {
+  console.log("Showing tweets...");
+  var client = new twitter({
+    consumer_key: keys.twitterKeys.consumer_key,
+    consumer_secret: keys.twitterKeys.consumer_secret,
+    access_token_key: keys.twitterKeys.access_token_key,
+    access_token_secret: keys.twitterKeys.access_token_secret
+  });
+  var params = {screen_name: "dankaltenbaugh" }
+  client.get('statuses/user_timeline', params,  function(error, tweets, response) {
+    if (!error) {
+      tweets.forEach(oneTweet);
+    }
+    function oneTweet(tweet, index, array) {
+          console.log(JSON.stringify(tweet.text, null, 2));
+    }
+  });
+}
+
+function spotThis(inSpot) {
+  if (inSpot.length < 1) {
+    inSpot = 'The Sign by Ace of Base';
+  }
+  spotify.search({ type: 'track', query: inSpot }, function(err, data) {
+    if ( err ) {
+        console.log('Error occurred: ' + err);
+    } else {
+      var songInfo = data.tracks.items[0];
+      var songResult = console.log(songInfo.artists[0].name);
+      console.log(songInfo.name);
+      console.log(songInfo.album.name);
+      }
+});
+}
+
+function omdbThis(inO) {
+  if (inO.length < 1) {
+    inO = 'Mr. Nobody';
+  }
+  request('http://www.omdbapi.com/?t='+ inO +'&y=&plot=short&r=json', function (error, response, body) {
+
+  if (!error && response.statusCode == 200) {
+    console.log(inO + " was released in " + JSON.parse(body)["Year"]);
+    console.log("The movie's rating is: " + JSON.parse(body)["imdbRating"]);
+    console.log("Plot: " + JSON.parse(body)["Plot"]);
+   
+  }
+});  
+}
